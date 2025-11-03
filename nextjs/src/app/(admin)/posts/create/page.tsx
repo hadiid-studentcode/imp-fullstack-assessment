@@ -13,18 +13,15 @@ export default function CreatePostPage() {
     body: "",
   });
   const router = useRouter();
-  const { user } = useAuth(); // Untuk mengecek apakah user sudah login
+  const { user } = useAuth(); 
 
-  // Gunakan hook mutasi, masukkan service function-nya
   const { mutate, isLoading, error, setError } = useApiMutation(createPost, {
     onSuccess: (data) => {
-      // 'data' adalah post yang baru dibuat
+    
       alert("Post berhasil dibuat!");
       console.log(data);
-    //   router.push(`/posts/${data.id}`); // Redirect ke halaman detail post
     },
     onError: (err) => {
-      // Error sudah otomatis di-set di state 'error'
       console.error(err.message);
     },
   });
@@ -34,7 +31,7 @@ export default function CreatePostPage() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(null); // Hapus error saat user mulai mengetik
+    if (error) setError(null);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -42,7 +39,6 @@ export default function CreatePostPage() {
     await mutate(formData);
   };
 
-  // Proteksi Halaman Sederhana
   if (!user) {
     return (
       <div className="text-center p-10">
