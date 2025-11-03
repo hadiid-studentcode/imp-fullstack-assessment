@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, FormEvent, useEffect } from "react";
@@ -18,7 +19,6 @@ export default function CreatePostPage() {
   const { mutate, isLoading, error, setError } = useApiMutation(createPost, {
     onSuccess: (data) => {
       alert("Post berhasil dibuat!");
-      console.log(data);
     },
     onError: (err) => {
       console.error(err.message);
