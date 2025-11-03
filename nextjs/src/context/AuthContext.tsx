@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await authService.register(data);
       setUser(response.user);
-      router.push("/");
+      router.push("/sign-in");
     } catch (err) {
       setError((err as Error).message);
       throw err;
@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async (): Promise<void> => {
     await authService.logout();
     setUser(null);
-    router.push("/login");
+    router.push("/sign-in");
   };
 
   const value: AuthContextType = {

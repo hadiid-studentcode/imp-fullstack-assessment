@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
@@ -8,7 +9,7 @@ import { LoginCredentials } from "@/types";
 import FormLogin from "@/components/formLogin";
 import ErrorAlert from "@/components/errorAlert";
 
-export default function SignIn() {
+export default function SignInPage() {
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: "",
     password: "",
@@ -69,7 +70,7 @@ export default function SignIn() {
               <legend className="fieldset-legend">
                 Dont have an account yet?
                 <Link href="/sign-up" className="btn-link ">
-                  Register
+                  Sign Up
                 </Link>
               </legend>
             </fieldset>
