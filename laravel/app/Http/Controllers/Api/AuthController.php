@@ -88,4 +88,22 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function logout(Request $request): JsonResponse
+    {
+        try {
+            $request->user()->tokens()->delete();
+
+            return response()->json([
+                'message' => 'User logged out successfully.'
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::error('Logout error: ' . $th->getMessage(), [
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'An unexpected server error occurred.'
+            ], 500);
+        }
+    }
 }
