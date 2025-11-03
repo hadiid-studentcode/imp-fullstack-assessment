@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApiMutation } from "@/hooks/useApiMutation";
 import { createPost } from "@/services/postService";
@@ -13,11 +13,10 @@ export default function CreatePostPage() {
     body: "",
   });
   const router = useRouter();
-  const { user } = useAuth(); 
+  const { user } = useAuth();
 
   const { mutate, isLoading, error, setError } = useApiMutation(createPost, {
     onSuccess: (data) => {
-    
       alert("Post berhasil dibuat!");
       console.log(data);
     },
@@ -39,18 +38,14 @@ export default function CreatePostPage() {
     await mutate(formData);
   };
 
+  useEffect(() => {
+    if (!user) {
+      router.push("/sign-in");
+    }
+  }, [user, router]);
+
   if (!user) {
-    return (
-      <div className="text-center p-10">
-        <p>Anda harus login untuk membuat post.</p>
-        <button
-          onClick={() => router.push("/login")}
-          className="btn btn-primary mt-4"
-        >
-          Login
-        </button>
-      </div>
-    );
+    return null;
   }
 
   return (
