@@ -11,7 +11,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('/hello-world', function () {
-   
+
     return response()->json(['message' => 'Hello World!']);
 });
 

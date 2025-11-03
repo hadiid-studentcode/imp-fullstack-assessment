@@ -4,7 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LoginCredentials } from "@/types"; // Impor tipe
+import { LoginCredentials } from "@/types"; 
 
 export default function LoginPage() {
   const [credentials, setCredentials] = useState<LoginCredentials>({
@@ -15,14 +15,12 @@ export default function LoginPage() {
 
   const { login, isLoading, error, setError, user } = useAuth();
 
-  // Redirect jika sudah login
   useEffect(() => {
     if (user) {
       router.push("/");
     }
   }, [user, router]);
 
-  // Hapus error saat mengetik
   useEffect(() => {
     if (credentials.email || credentials.password) {
       setError(null);
@@ -46,7 +44,7 @@ export default function LoginPage() {
     }
   };
 
-  if (user) return null; // Menunggu redirect
+  if (user) return null;
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -66,7 +64,7 @@ export default function LoginPage() {
             </label>
             <input
               type="email"
-              name="email" // 'name' harus sesuai dengan state
+              name="email" 
               value={credentials.email}
               onChange={handleChange}
               className="input input-bordered"
@@ -80,7 +78,7 @@ export default function LoginPage() {
             </label>
             <input
               type="password"
-              name="password" // 'name' harus sesuai dengan state
+              name="password" 
               value={credentials.password}
               onChange={handleChange}
               className="input input-bordered"

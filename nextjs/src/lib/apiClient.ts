@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { URL_BACKEND_API } from "@/config";
-import { AuthResponse, User } from "@/types";
+import { User } from "@/types";
 
 const tokenManager = {
   getToken: (): string | null => {
@@ -27,8 +27,11 @@ const tokenManager = {
   getUser: (): User | null => {
     if (typeof window === "undefined") return null;
     const user = localStorage.getItem("authUser");
+    if (!user || user === "undefined") {
+      return null;
+    }
     try {
-      return user ? (JSON.parse(user) as User) : null;
+      return JSON.parse(user) as User;
     } catch (error) {
       console.error("Error parsing user data:", error);
       return null;
@@ -83,16 +86,7 @@ const request = async <T = any>(
   }
 
   const response = await fetch(`${URL_BACKEND_API}${endpoint}`, config);
-  const responseData = await handleResponse(response);
-
-  const authData = responseData as AuthResponse;
-
-  if (authData) {
-    tokenManager.setToken(authData.token);
-    tokenManager.setUser(authData.user);
-  }
-
-  return responseData as T;
+  return handleResponse(response) as Promise<T>;
 };
 
 export const apiClient = {

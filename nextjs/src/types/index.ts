@@ -28,3 +28,34 @@ export interface AuthContextType {
   logout: () => Promise<void>;
   setError: (error: string | null) => void;
 }
+
+export interface Post {
+  id: number;
+  title: string;
+  body: string;
+  created_at: Date;
+  updated_at: Date;
+  user_id: number;
+  user?: User;
+}
+
+export type PostFormData = Pick<Post, "title" | "body">;
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  links: {
+    first: string;
+    last: string;
+    prev: string | null;
+    next: string | null;
+  };
+  meta: {
+    current_page: number;
+    from: number;
+    last_page: number;
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+  };
+}

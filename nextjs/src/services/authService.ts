@@ -1,8 +1,17 @@
 import { apiClient, tokenManager } from "@/lib/apiClient";
 import { AuthResponse, LoginCredentials, RegisterData, User } from "@/types";
 
-export const login = (credentials: LoginCredentials): Promise<AuthResponse> => {
-  return apiClient.post<AuthResponse>("/sign-in", credentials);
+// Fungsi Login
+export const login = async (credentials: LoginCredentials): Promise<User> => {
+  const response = await apiClient.post<AuthResponse>("/sign-in", credentials);
+
+  if (response && response.token && response.user) {
+    tokenManager.setToken(response.token);
+    tokenManager.setUser(response.user);
+    return response.user;
+  }
+
+  throw new Error("Login failed");
 };
 
 export const register = (userData: RegisterData): Promise<AuthResponse> => {
