@@ -1,21 +1,67 @@
+"use client";
+
+import { useApiMutation } from "@/hooks/useApiMutation";
+import { useApiQuery } from "@/hooks/useApiQuery";
+import { deletePost, getPosts } from "@/services/postService";
+import { Post } from "@/types";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { CiEdit } from "react-icons/ci";
 import { FaRegTrashAlt } from "react-icons/fa";
 
-const mockPosts = [
-  { id: 1, title: "Judul Post Pertama", author: "Admin" },
-  { id: 2, title: "DaisyUI itu Keren", author: "User" },
-  { id: 3, title: "Belajar Next.js dan Laravel", author: "Admin" },
-];
-
 export default function PostManagementPage() {
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading, error, refetch } = useApiQuery(
+    () => getPosts(page),
+    [page]
+  );
+  const { mutate: deletePostMutate } = useApiMutation(
+    deletePost, 
+    {
+      onSuccess: () => {
+        toast("Post successfully deleted.");
+       refetch();
+      },
+      onError: (err) => {
+        toast(`Post deletion failed: ${err.message}`);
+      },
+    }
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-error max-w-lg mx-auto">
+        <span>Error: {error}</span>
+      </div>
+    );
+  }
+
+ const handleDelete = (id: number ) => {
+   if (window.confirm("Apakah Anda yakin ingin menghapus post ini?")) {
+     deletePostMutate(id);
+   }
+ };
   return (
     <div className="card bg-base-100 shadow-xl">
+      <Toaster />
+
       <div className="card-body">
         <div className="card-title flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">Manajemen Postingan</h2>
-          <Link href="/posts/create" className="btn btn-primary">+ Tambah Postingan Baru</Link>
+          <Link href="/posts/create" className="btn btn-primary">
+            + Tambah Postingan Baru
+          </Link>
         </div>
 
         {/* Tabel Data */}
@@ -31,40 +77,58 @@ export default function PostManagementPage() {
               </tr>
             </thead>
             <tbody>
-              {mockPosts.map((post, index) => (
-                <tr key={post.id} className="hover">
-                  <th>{index + 1}</th>
-                  <td>{post.title}</td>
-                  <td>{post.author}</td>
-                  <td className="flex gap-2">
-                    <button
-                      className="btn btn-ghost btn-sm btn-circle"
-                      aria-label="Edit"
-                    >
-                      <CiEdit />
-                    </button>
-                    <button
-                      className="btn btn-ghost btn-sm btn-circle text-error"
-                      aria-label="Delete"
-                    >
-                      <FaRegTrashAlt />
-                    </button>
+              {data && data.data.length > 0 ? (
+                data.data.map((post: Post, index: number) => (
+                  <tr key={post.id} className="hover">
+                    <th>{index + 1}</th>
+                    <td>{post.title}</td>
+                    <td>{post.body}</td>
+                    <td className="flex gap-2">
+                      <button
+                        className="btn btn-ghost btn-sm btn-circle"
+                        aria-label="Edit"
+                      >
+                        <CiEdit />
+                      </button>
+                      <button
+                        className="btn btn-ghost btn-sm btn-circle text-error"
+                        aria-label="Delete"
+                        onClick={() => handleDelete(post.id)}
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="text-center">
+                    Tidak ada data
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
-        <div className="join card-actions justify-center mt-6">
-          <button className="join-item btn">«</button>
-          <button className="join-item btn btn-active">1</button>
-          <button className="join-item btn">2</button>
-          <button className="join-item btn">3</button>
-          <button className="join-item btn btn-disabled">...</button>
-          <button className="join-item btn">99</button>
-          <button className="join-item btn">»</button>
-        </div>
+        {data && (
+          <div className="join card-actions justify-end mt-6">
+            <button
+              onClick={() => setPage(data.meta.current_page - 1)}
+              disabled={!data.links.prev}
+              className="join-item btn btn-outline"
+            >
+              « Prev
+            </button>
+            <button
+              onClick={() => setPage(data.meta.current_page + 1)}
+              disabled={!data.links.next}
+              className="join-item btn btn-outline"
+            >
+              Next »
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
