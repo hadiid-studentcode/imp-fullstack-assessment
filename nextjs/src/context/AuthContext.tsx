@@ -7,11 +7,9 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import * as authService from "@/services/authService";
 import { AuthContextType, LoginCredentials, RegisterData, User } from "@/types";
-
-const PROTECTED_ROUTES = ["/dashboard", "/posts"];
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -24,7 +22,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     const localUser = authService.getLocalUser();
@@ -33,18 +30,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     setIsLoading(false);
   }, []);
-
-  useEffect(() => {
-    if (!isLoading) {
-      const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
-        pathname.startsWith(route)
-      );
-
-      if (isProtectedRoute && !user) {
-        router.push(`/sign-in?redirect=${pathname}`);
-      }
-    }
-  }, [isLoading, user, pathname, router]);
 
   const login = async (credentials: LoginCredentials): Promise<void> => {
     setIsLoading(true);
@@ -100,16 +85,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
   }
 
-  const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
-    pathname.startsWith(route)
-  );
-  if (isLoading || (isProtectedRoute && !user)) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
