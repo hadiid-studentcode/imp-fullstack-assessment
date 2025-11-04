@@ -30,6 +30,7 @@ export interface AuthContextType {
 }
 
 export interface Post {
+  post: any;
   id: number;
   title: string;
   body: string;

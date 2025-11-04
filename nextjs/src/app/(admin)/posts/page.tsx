@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { CiEdit } from "react-icons/ci";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaRegEye, FaRegTrashAlt } from "react-icons/fa";
 
 export default function PostManagementPage() {
   const [page, setPage] = useState(1);
@@ -84,6 +84,13 @@ export default function PostManagementPage() {
                     <td>{post.title}</td>
                     <td>{post.body}</td>
                     <td className="flex gap-2">
+                      <Link
+                        href={`/posts/${post.id}`}
+                        className="btn btn-ghost btn-sm btn-circle"
+                        aria-label="show"
+                      >
+                        <FaRegEye />
+                      </Link>
                       <button
                         className="btn btn-ghost btn-sm btn-circle"
                         aria-label="Edit"
