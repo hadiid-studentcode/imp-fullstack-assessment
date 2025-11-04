@@ -7,6 +7,8 @@ import { useApiMutation } from "@/hooks/useApiMutation";
 import { createPost } from "@/services/postService";
 import { PostFormData } from "@/types";
 import { useAuth } from "@/context/AuthContext";
+import ErrorAlert from "@/components/errorAlert";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function CreatePostPage() {
   const [formData, setFormData] = useState<PostFormData>({
@@ -18,7 +20,11 @@ export default function CreatePostPage() {
 
   const { mutate, isLoading, error, setError } = useApiMutation(createPost, {
     onSuccess: (data) => {
-      alert("Post berhasil dibuat!");
+     toast("Post created successfully.");
+     setFormData({
+       title: "",
+       body: "",
+     });
     },
     onError: (err) => {
       console.error(err.message);
@@ -49,56 +55,45 @@ export default function CreatePostPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Buat Postingan Baru</h1>
+    <div className="card bg-base-100 shadow-sm">
+      <Toaster />
+      {error && <ErrorAlert error={error} />}
 
-      {error && (
-        <div className="alert alert-error mb-4">
-          <span>{error}</span>
-        </div>
-      )}
+      <div className="card-body">
+        <h2 className="card-title">Create New Post</h2>
+        <form onSubmit={handleSubmit}>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Title</legend>
+            <input
+              type="text"
+              className="input"
+              placeholder="Type here"
+              value={formData.title}
+              onChange={handleChange}
+              name="title"
+              disabled={isLoading}
+              required
+            />
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Judul</span>
-          </label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="input input-bordered w-full"
-            disabled={isLoading}
-            required
-          />
-        </div>
-
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Isi Postingan</span>
-          </label>
-          <textarea
-            name="body"
-            value={formData.body}
-            onChange={handleChange}
-            className="textarea textarea-bordered h-40"
-            disabled={isLoading}
-            required
-          ></textarea>
-        </div>
-
-        <div className="form-control">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isLoading}
-          >
-            {isLoading && <span className="loading loading-spinner"></span>}
-            Submit Postingan
-          </button>
-        </div>
-      </form>
+            <legend className="fieldset-legend">Body</legend>
+            <textarea
+              className="textarea h-24"
+              placeholder="Type here"
+              name="body"
+              value={formData.body}
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+            ></textarea>
+          </fieldset>
+          <div className="card-actions mt-4 ">
+            <button className="btn btn-primary" disabled={isLoading}>
+              {isLoading && <span className="loading loading-spinner"></span>}
+              Create Post
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
