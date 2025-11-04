@@ -20,10 +20,32 @@ Proyek ini dibuat menggunakan dua *stack* terpisah sesuai dengan instruksi:
 
 ## STRUKTUR FOLDER
 
-Repositori ini berisi dua folder utama yang menampung masing-masing aplikasi, sesuai dengan tampilan di VS Code Anda:
+Repositori ini berisi dua folder utama yang menampung masing-masing aplikasi:
 
 * `./laravel/`: Berisi seluruh kode untuk backend API Laravel.
 * `./nextjs/`: Berisi seluruh kode untuk frontend Next.js.
+
+---
+
+## INFORMASI API ENDPOINTS
+
+Endpoint API ini didefinisikan di `laravel/routes/api.php`. Semua endpoint secara otomatis diawali dengan prefix `/api/` oleh Laravel.
+
+URL Backend yang digunakan di Next.js: `http://localhost:8000/api`
+
+### Rute Publik (Tidak Perlu Autentikasi)
+* `POST /sign-up`: Registrasi user baru.
+* `POST /sign-in`: Login user.
+* `GET /hello-world`: Rute tes untuk "Hello World".
+
+### Rute Terproteksi (Wajib Autentikasi - Sanctum)
+
+* `POST /sign-out`: Logout user.
+* `GET /posts`: Menampilkan semua postingan (paginasi).
+* `POST /posts`: Menyimpan postingan baru.
+* `GET /posts/{id}`: Menampilkan detail satu postingan.
+* `PUT /posts/{id}`: Memperbarui postingan.
+* `DELETE /posts/{id}`: Menghapus postingan.
 
 ---
 
