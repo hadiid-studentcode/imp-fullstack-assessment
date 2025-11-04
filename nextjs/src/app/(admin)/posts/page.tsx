@@ -13,23 +13,21 @@ import { FaRegEye, FaRegTrashAlt } from "react-icons/fa";
 
 export default function PostManagementPage() {
   const [page, setPage] = useState(1);
+  const router = useRouter();
 
   const { data, isLoading, error, refetch } = useApiQuery(
     () => getPosts(page),
     [page]
   );
-  const { mutate: deletePostMutate } = useApiMutation(
-    deletePost, 
-    {
-      onSuccess: () => {
-        toast("Post successfully deleted.");
-       refetch();
-      },
-      onError: (err) => {
-        toast(`Post deletion failed: ${err.message}`);
-      },
-    }
-  );
+  const { mutate: deletePostMutate } = useApiMutation(deletePost, {
+    onSuccess: () => {
+      toast("Post successfully deleted.");
+      refetch();
+    },
+    onError: (err) => {
+      toast(`Post deletion failed: ${err.message}`);
+    },
+  });
 
   if (isLoading) {
     return (
@@ -47,11 +45,11 @@ export default function PostManagementPage() {
     );
   }
 
- const handleDelete = (id: number ) => {
-   if (window.confirm("Apakah Anda yakin ingin menghapus post ini?")) {
-     deletePostMutate(id);
-   }
- };
+  const handleDelete = (id: number) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus post ini?")) {
+      deletePostMutate(id);
+    }
+  };
   return (
     <div className="card bg-base-100 shadow-xl">
       <Toaster />
@@ -71,8 +69,8 @@ export default function PostManagementPage() {
             <thead className="bg-base-200">
               <tr>
                 <th>No</th>
-                <th>Judul Postingan</th>
-                <th>Author</th>
+                <th>Title</th>
+                <th>Body</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -94,6 +92,7 @@ export default function PostManagementPage() {
                       <button
                         className="btn btn-ghost btn-sm btn-circle"
                         aria-label="Edit"
+                        onClick={() => router.push(`/posts/${post.id}/edit`)}
                       >
                         <CiEdit />
                       </button>
