@@ -14,8 +14,18 @@ export const login = async (credentials: LoginCredentials): Promise<User> => {
   throw new Error("Login failed");
 };
 
-export const register = (userData: RegisterData): Promise<AuthResponse> => {
-  return apiClient.post<AuthResponse>("/sign-up", userData);
+export const register = async (
+  userData: RegisterData
+): Promise<AuthResponse> => {
+  const response = await apiClient.post<AuthResponse>("/sign-up", userData);
+
+  if (response && response.token && response.user) {
+    tokenManager.setToken(response.token);
+    tokenManager.setUser(response.user);
+    return response;
+  }
+
+  throw new Error("Login failed");
 };
 
 export const logout = async (): Promise<void> => {
